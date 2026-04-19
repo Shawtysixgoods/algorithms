@@ -1,11 +1,47 @@
-fn bubble_sort(arr: Array[Int]) -> Array[Int] {
-  let new_arr = arr.copy()
-  for i in 0..<new_arr.length(){
-    for j in 1..<(new_arr.length() - i){
-      if(new_arr[j - 1] > new_arr[j]){
-        new_arr.swap(j - 1, j)
+/// Оптимизированная сортировка пузырьком.
+/// Возвращает новый отсортированный массив, не изменяя исходный.
+pub fn bubble_sort(arr: Array[Int]) -> Array[Int] {
+  let new_arr = arr.copy() // Создаем копию массива, чтобы сохранить исходный массив неизменным
+  let len = new_arr.length()
+  
+  for i in 0..<len { // Внешний цикл отвечает за количество проходов
+    let mut swapped = false // Флаг для отслеживания обменов в текущем проходе
+    // Внутренний цикл: с каждым проходом самый большой элемент "всплывает" в конец,
+    // поэтому нам не нужно проверять последние `i` элементов.
+    for j in 1..<(len - i) {
+      if new_arr[j - 1] > new_arr[j] {
+        new_arr.swap(j - 1, j) // Встроенная функция для обмена элементов
+        swapped = true
       }
+    }
+    // ОПТИМИЗАЦИЯ: Если за весь проход не было сделано ни одного обмена,
+    // массив уже отсортирован, и мы можем досрочно завершить работу.
+    if !swapped {
+      break
     }
   }
   return new_arr
+}
+
+test "bubble_sort_basic" {
+  // 1. Обычный несортированный массив
+  let arr1 = [5, 3, 4, 1, 2]
+  inspect(bubble_sort(arr1), content="[1, 2, 3, 4, 5]")
+  
+  // 2. Уже отсортированный массив (проверка оптимизации раннего выхода)
+  let arr2 = [1, 2, 3, 4, 5]
+  inspect(bubble_sort(arr2), content="[1, 2, 3, 4, 5]")
+  
+  // 3. Массив отсортированный в обратном порядке (худший случай)
+  let arr3 = [9, 8, 7, 6]
+  inspect(bubble_sort(arr3), content="[6, 7, 8, 9]")
+  
+  // 4. Массив с повторяющимися элементами
+  let arr4 = [4, 2, 2, 8, 3, 3, 1]
+  inspect(bubble_sort(arr4), content="[1, 2, 2, 3, 3, 4, 8]")
+  
+  // 5. Пустой массив и массив из одного элемента (граничные случаи)
+  let empty_arr : Array[Int] = []
+  inspect(bubble_sort(empty_arr), content="[]")
+  inspect(bubble_sort([42]), content="[42]")
 }
