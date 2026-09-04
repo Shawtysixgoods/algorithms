@@ -1,33 +1,23 @@
-# pip install perfplot matplotlib
+from timebudget import timebudget
 
-import perfplot
-import random
-
-
+@timebudget
 def bubble_sort(arr):
-    data = arr.copy()
-    n = len(data)
-    for i in range(n):
-        for j in range(0, n-i-1):
-            if data[j] > data[j+1]:
-                data[j], data[j+1] = data[j+1], data[j]
-    return data
+    a = arr.copy()
+    for i in range(len(a)):
+        for j in range(len(a) - i - 1):
+            if a[j] > a[j+1]:
+                a[j], a[j+1] = a[j+1], a[j]
+    return a
 
-def quick_sort_builtin(arr):
+@timebudget
+def quick_sort(arr):
     return sorted(arr)
 
+# Прогон тестов
+import random
+data = [random.randint(0, 1000) for _ in range(2000)]
+bubble_sort(data)
+quick_sort(data)
 
-bench = perfplot.bench(
-    setup=lambda n: [random.randint(0, 1000) for _ in range(n)], # как генерировать данные масштаба N
-    kernels=[
-        bubble_sort,
-        quick_sort_builtin
-    ],
-    labels=["Bubble Sort", "Built-in Sort"],
-    n_range=[2**k for k in range(2, 10)], # размеры массивов: от 4 до 512 элементов
-    xlabel="Размер массива (N)",
-    title="Сравнение алгоритмов сортировки"
-)
-
-bench.print()
-bench.show()
+# Печать красивой сводки
+timebudget.report()
